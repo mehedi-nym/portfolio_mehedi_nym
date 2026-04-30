@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 248 250 252;
+  --fg: 15 23 42;
+  --muted: 71 85 105;
+  --surface: 255 255 255;
+  --card: 255 255 255;
+  --line: 226 232 240;
+}
+
+.dark {
+  --bg: 8 15 27;
+  --fg: 241 245 249;
+  --muted: 148 163 184;
+  --surface: 15 23 42;
+  --card: 12 20 35;
+  --line: 30 41 59;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(15, 118, 110, 0.12), transparent 28%),
+    radial-gradient(circle at top right, rgba(249, 115, 22, 0.08), transparent 24%),
+    rgb(var(--bg));
+  color: rgb(var(--fg));
+}
+
+::selection {
+  background: rgba(15, 118, 110, 0.18);
+}
+
+@layer base {
+  * {
+    @apply border-line;
+  }
+
+  body {
+    @apply antialiased;
+  }
+
+  a,
+  button {
+    @apply transition-all duration-300;
+  }
+}
+
+@layer components {
+  .section-shell {
+    @apply mx-auto w-full max-w-7xl px-6 sm:px-8 lg:px-10;
+  }
+
+  .section-card {
+    @apply rounded-[2rem] border border-line/80 bg-card/80 shadow-soft backdrop-blur;
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center rounded-full border border-accent/20 bg-accent/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-accent;
+  }
+}
