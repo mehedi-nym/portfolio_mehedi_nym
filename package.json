@@ -8,6 +8,9 @@
     "start": "next start"
   },
   "dependencies": {
+    "@supabase-js/source": "github:supabase/supabase-js",
+    "@supabase/ssr": "^0.10.2",
+    "@supabase/supabase-js": "^2.105.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.10.5",
     "lucide-react": "^0.511.0",
