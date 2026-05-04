@@ -1,8 +1,12 @@
 import { FadeIn } from "@/components/motion";
 import { SectionHeading } from "@/components/section-heading";
-import { experiences } from "@/lib/portfolio-data";
+import type { ExperienceItem } from "@/lib/portfolio-data";
 
-export function ExperienceSection() {
+type Props = {
+  experiences: ExperienceItem[];
+};
+
+export function ExperienceSection({ experiences }: Props) {
   return (
     <section id="experience" className="section-shell pt-24">
       <SectionHeading

@@ -6,9 +6,14 @@ import { useMemo, useState } from "react";
 import { FadeIn } from "@/components/motion";
 import { ProjectVisual } from "@/components/project-visual";
 import { SectionHeading } from "@/components/section-heading";
-import { projectFilters, projects, type Project } from "@/lib/portfolio-data";
+import type { Project, ProjectCategory } from "@/lib/portfolio-data";
 
-export function ProjectsSection() {
+type Props = {
+  projects: Project[];
+  projectFilters: Array<ProjectCategory | "All">;
+};
+
+export function ProjectsSection({ projects, projectFilters }: Props) {
   const [filter, setFilter] = useState<(typeof projectFilters)[number]>("All");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 

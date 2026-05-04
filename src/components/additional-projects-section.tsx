@@ -1,7 +1,11 @@
 import { FadeIn } from "@/components/motion";
-import { additionalProjects } from "@/lib/portfolio-data";
+import type { AdditionalProject } from "@/lib/portfolio-data";
 
-export function AdditionalProjectsSection() {
+type Props = {
+  additionalProjects: AdditionalProject[];
+};
+
+export function AdditionalProjectsSection({ additionalProjects }: Props) {
   return (
     <section className="section-shell pt-24">
       <FadeIn className="section-card p-8 sm:p-10">
@@ -14,10 +18,10 @@ export function AdditionalProjectsSection() {
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           {additionalProjects.map((item) => (
             <div
-              key={item}
+              key={item.id || item.text}
               className="rounded-[1.5rem] border border-line/80 bg-surface/70 p-5 text-sm leading-7 text-muted"
             >
-              {item}
+              {item.text}
             </div>
           ))}
         </div>

@@ -2,11 +2,15 @@
 
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
-import { navItems } from "@/lib/portfolio-data";
+import type { NavItem } from "@/lib/portfolio-data";
 import { ThemeToggle } from "./theme-toggle";
 import Image from "next/image"; // Import Next.js Image component
 
-export function Navbar() {
+type Props = {
+  navItems: NavItem[];
+};
+
+export function Navbar({ navItems }: Props) {
   const [open, setOpen] = useState(false);
 
   return (

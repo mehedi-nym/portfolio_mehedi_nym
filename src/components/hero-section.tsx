@@ -1,8 +1,12 @@
 import { ArrowRight, Mail, MapPin } from "lucide-react";
 import { FadeIn } from "@/components/motion";
-import { heroMetrics } from "@/lib/portfolio-data";
+import type { HeroMetric } from "@/lib/portfolio-data";
 
-export function HeroSection() {
+type Props = {
+  heroMetrics: HeroMetric[];
+};
+
+export function HeroSection({ heroMetrics }: Props) {
   return (
     <section id="top" className="section-shell pt-12 sm:pt-16">
       <div className="section-card overflow-hidden px-6 py-10 sm:px-10 sm:py-14 lg:px-14 lg:py-16">

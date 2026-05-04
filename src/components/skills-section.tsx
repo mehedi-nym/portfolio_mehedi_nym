@@ -1,8 +1,12 @@
 import { FadeIn } from "@/components/motion";
 import { SectionHeading } from "@/components/section-heading";
-import { skillGroups } from "@/lib/portfolio-data";
+import type { SkillGroup } from "@/lib/portfolio-data";
 
-export function SkillsSection() {
+type Props = {
+  skillGroups: SkillGroup[];
+};
+
+export function SkillsSection({ skillGroups }: Props) {
   return (
     <section id="skills" className="section-shell pt-24">
       <SectionHeading

@@ -1,8 +1,12 @@
 import { FadeIn } from "@/components/motion";
 import { SectionHeading } from "@/components/section-heading";
-import { flagshipPoints } from "@/lib/portfolio-data";
+import type { FlagshipPoint } from "@/lib/portfolio-data";
 
-export function FlagshipSection() {
+type Props = {
+  flagshipPoints: FlagshipPoint[];
+};
+
+export function FlagshipSection({ flagshipPoints }: Props) {
   return (
     <section id="flagship-system" className="section-shell pt-24">
       <div className="section-card overflow-hidden p-8 sm:p-10 lg:p-12">

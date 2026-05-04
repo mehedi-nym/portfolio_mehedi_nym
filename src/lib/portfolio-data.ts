@@ -1,19 +1,26 @@
 export type SkillGroup = {
+  id?: string;
   title: string;
   items: string[];
+  orderNo?: number;
+  isVisible?: boolean;
 };
 
 export type ExperienceItem = {
+  id?: string;
   company: string;
   period: string;
   role: string;
   focus: string;
   bullets: string[];
+  orderNo?: number;
+  isVisible?: boolean;
 };
 
 export type ProjectCategory = "OTA" | "CMS" | "AI" | "Ecommerce";
 
 export type Project = {
+  id?: string;
   title: string;
   category: ProjectCategory;
   summary: string;
@@ -23,6 +30,58 @@ export type Project = {
   images?: string[];
   highlights: string[];
   visualLabel: string;
+  orderNo?: number;
+  isVisible?: boolean;
+};
+
+export type NavItem = {
+  label: string;
+  href: string;
+};
+
+export type HeroMetric = {
+  id?: string;
+  label: string;
+  value: string;
+  href?: string;
+  orderNo?: number;
+  isVisible?: boolean;
+};
+
+export type FlagshipPoint = {
+  id?: string;
+  title: string;
+  description: string;
+  orderNo?: number;
+  isVisible?: boolean;
+};
+
+export type ContactLink = {
+  id?: string;
+  label: string;
+  value: string;
+  href: string;
+  orderNo?: number;
+  isVisible?: boolean;
+};
+
+export type AdditionalProject = {
+  id?: string;
+  text: string;
+  orderNo?: number;
+  isVisible?: boolean;
+};
+
+export type PortfolioData = {
+  navItems: NavItem[];
+  heroMetrics: HeroMetric[];
+  skillGroups: SkillGroup[];
+  experiences: ExperienceItem[];
+  projectFilters: Array<ProjectCategory | "All">;
+  projects: Project[];
+  additionalProjects: AdditionalProject[];
+  flagshipPoints: FlagshipPoint[];
+  contactLinks: ContactLink[];
 };
 
 export const navItems = [
@@ -265,3 +324,15 @@ export const contactLinks = [
     href: "https://www.linkedin.com/in/mehedi-nym/",
   },
 ];
+
+export const staticPortfolioData: PortfolioData = {
+  navItems,
+  heroMetrics,
+  skillGroups,
+  experiences,
+  projectFilters,
+  projects,
+  additionalProjects: additionalProjects.map((text) => ({ text })),
+  flagshipPoints,
+  contactLinks,
+};

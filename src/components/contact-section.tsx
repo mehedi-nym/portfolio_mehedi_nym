@@ -1,9 +1,13 @@
 import { Send } from "lucide-react";
 import { FadeIn } from "@/components/motion";
 import { SectionHeading } from "@/components/section-heading";
-import { contactLinks } from "@/lib/portfolio-data";
+import type { ContactLink } from "@/lib/portfolio-data";
 
-export function ContactSection() {
+type Props = {
+  contactLinks: ContactLink[];
+};
+
+export function ContactSection({ contactLinks }: Props) {
   return (
     <section id="contact" className="section-shell py-24">
       <div className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
