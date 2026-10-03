@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { ThemeProvider } from "@/components/theme-provider";
+import { AdminListEditor } from "@/components/admin-list-editor";
 import { adminSelect, getPortfolioData } from "@/lib/supabase-portfolio";
 import {
   deleteAdditionalProject,
@@ -172,6 +173,7 @@ function ImageManager({ images = [] }: { images?: string[] }) {
           multiple
           className="w-full rounded-xl border border-dashed border-line bg-bg px-3 py-4 text-sm text-muted file:mr-4 file:rounded-full file:border-0 file:bg-ink file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:border-accent/50 dark:file:bg-white dark:file:text-ink"
         />
+        <p>Under 5 MB only</p>
       </label>
     </div>
   );
@@ -306,14 +308,20 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                     <label className={labelClass}>Order<input name="order_no" type="number" defaultValue={project.orderNo ?? 0} className={inputClass} /></label>
                   </div>
                   <label className={labelClass}>Summary<textarea name="summary" defaultValue={project.summary} className={textareaClass} /></label>
+                  <label className={labelClass}>Project story<textarea name="story" defaultValue={project.story} className={textareaClass} /></label>
+                  <div className="grid gap-4 lg:grid-cols-2">
+                    <AdminListEditor name="benefits" label="Benefits" items={project.benefits} />
+                    <AdminListEditor name="differences" label="What makes it different" items={project.differences} />
+                  </div>
                   <div className="grid gap-4 lg:grid-cols-2">
                     <label className={labelClass}>Live URL<input name="live_url" defaultValue={project.liveUrl} className={inputClass} /></label>
                     <label className={labelClass}>Visual label<input name="visual_label" defaultValue={project.visualLabel} className={inputClass} /></label>
+                    <label className={labelClass}>Video URL <span className="font-normal normal-case tracking-normal">Use a hosted MP4/WebM URL to avoid storage usage.</span><input name="video_url" defaultValue={project.videoUrl || ""} className={inputClass} /></label>
                   </div>
                   <div className="grid gap-4 lg:grid-cols-3">
-                    <label className={labelClass}>Tech, one per line<textarea name="tech" defaultValue={project.tech.join("\n")} className={textareaClass} /></label>
+                    <AdminListEditor name="tech" label="Tech stack" items={project.tech} />
                     <ImageManager images={project.images || []} />
-                    <label className={labelClass}>Highlights, one per line<textarea name="highlights" defaultValue={project.highlights.join("\n")} className={textareaClass} /></label>
+                    <AdminListEditor name="highlights" label="Highlights" items={project.highlights} />
                   </div>
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex gap-5"><Visibility visible={project.isVisible} /><label className="inline-flex items-center gap-2 text-sm text-muted"><input name="featured" type="checkbox" defaultChecked={project.featured} className="h-4 w-4 accent-teal-700" />Featured</label></div>
@@ -337,7 +345,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                     <label className={labelClass}>Order<input name="order_no" type="number" defaultValue={item.orderNo ?? 0} className={inputClass} /></label>
                   </div>
                   <label className={labelClass}>Focus<textarea name="focus" defaultValue={item.focus} className={textareaClass} /></label>
-                  <label className={labelClass}>Bullets, one per line<textarea name="bullets" defaultValue={item.bullets.join("\n")} className={textareaClass} /></label>
+                  <AdminListEditor name="bullets" label="Experience bullets" items={item.bullets} />
                   <div className="flex items-center justify-between"><Visibility visible={item.isVisible} /><SaveButton /></div>
                 </form>
                 <form action={deleteExperience} className="mt-3"><input type="hidden" name="id" defaultValue={item.id} /><DeleteButton /></form>
@@ -355,7 +363,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                     <label className={labelClass}>Title<input name="title" defaultValue={group.title} className={inputClass} /></label>
                     <label className={labelClass}>Order<input name="order_no" type="number" defaultValue={group.orderNo ?? 0} className={inputClass} /></label>
                   </div>
-                  <label className={labelClass}>Skills, one per line<textarea name="skills" defaultValue={group.items.join("\n")} className={textareaClass} /></label>
+                  <AdminListEditor name="skills" label="Skills" items={group.items} />
                   <div className="flex items-center justify-between"><Visibility visible={group.isVisible} /><SaveButton /></div>
                 </form>
                 <form action={deleteSkillGroup} className="mt-3"><input type="hidden" name="id" defaultValue={group.id} /><DeleteButton /></form>
@@ -385,14 +393,20 @@ function ProjectCreateForm({ nextOrder }: { nextOrder: number }) {
           <label className={labelClass}>Order<input name="order_no" type="number" defaultValue={nextOrder} className={inputClass} /></label>
         </div>
         <label className={labelClass}>Summary<textarea name="summary" className={textareaClass} /></label>
+        <label className={labelClass}>Project story<textarea name="story" className={textareaClass} /></label>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <AdminListEditor name="benefits" label="Benefits" />
+          <AdminListEditor name="differences" label="What makes it different" />
+        </div>
         <div className="grid gap-4 lg:grid-cols-2">
           <label className={labelClass}>Live URL<input name="live_url" className={inputClass} /></label>
           <label className={labelClass}>Visual label<input name="visual_label" className={inputClass} /></label>
+          <label className={labelClass}>Video URL <span className="font-normal normal-case tracking-normal">Hosted URL only</span><input name="video_url" className={inputClass} /></label>
         </div>
         <div className="grid gap-4 lg:grid-cols-3">
-          <label className={labelClass}>Tech<textarea name="tech" className={textareaClass} /></label>
+          <AdminListEditor name="tech" label="Tech stack" />
           <ImageManager />
-          <label className={labelClass}>Highlights<textarea name="highlights" className={textareaClass} /></label>
+          <AdminListEditor name="highlights" label="Highlights" />
         </div>
         <div className="flex items-center justify-between"><Visibility /><SaveButton label="Add project" /></div>
       </form>
@@ -412,7 +426,7 @@ function ExperienceCreateForm() {
           <label className={labelClass}>Order<input name="order_no" type="number" defaultValue={0} className={inputClass} /></label>
         </div>
         <label className={labelClass}>Focus<textarea name="focus" className={textareaClass} /></label>
-        <label className={labelClass}>Bullets<textarea name="bullets" className={textareaClass} /></label>
+        <AdminListEditor name="bullets" label="Experience bullets" />
         <div className="flex items-center justify-between"><Visibility /><SaveButton label="Add experience" /></div>
       </form>
     </FormCard>
@@ -428,7 +442,7 @@ function SkillCreateForm() {
           <label className={labelClass}>Title<input name="title" required className={inputClass} /></label>
           <label className={labelClass}>Order<input name="order_no" type="number" defaultValue={0} className={inputClass} /></label>
         </div>
-        <label className={labelClass}>Skills<textarea name="skills" className={textareaClass} /></label>
+        <AdminListEditor name="skills" label="Skills" />
         <div className="flex items-center justify-between"><Visibility /><SaveButton label="Add skill group" /></div>
       </form>
     </FormCard>

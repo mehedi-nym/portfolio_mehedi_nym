@@ -9,6 +9,7 @@ import {
   adminDeleteAll,
   adminDeleteWhere,
   adminInsert,
+  adminUpsert,
   adminUpdate,
   uploadProjectImage,
 } from "@/lib/supabase-portfolio";
@@ -45,8 +46,9 @@ function booleanValue(formData: FormData, key: string) {
 }
 
 function lines(formData: FormData, key: string) {
-  return text(formData, key)
-    .split(/\r?\n/)
+  return formData
+    .getAll(key)
+    .flatMap((value) => (typeof value === "string" ? value.split(/\r?\n/) : []))
     .map((item) => item.trim())
     .filter(Boolean);
 }
@@ -213,6 +215,17 @@ export async function seedStaticPortfolioData() {
         adminInsert("project_highlights", { project_id: projectId, text: textValue })
       ),
     ]);
+    await adminUpsert(
+      "project_details",
+      {
+        project_id: projectId,
+        story: project.story,
+        benefits: project.benefits,
+        differences: project.differences,
+        video_url: project.videoUrl || null,
+      },
+      "project_id"
+    );
   }
 
   refreshAdmin();
@@ -251,6 +264,18 @@ export async function saveProject(formData: FormData) {
     ...imageUrls.map((image_url) => adminInsert("project_images", { project_id: projectId, image_url })),
     ...lines(formData, "highlights").map((textValue) => adminInsert("project_highlights", { project_id: projectId, text: textValue })),
   ]);
+
+  await adminUpsert(
+    "project_details",
+    {
+      project_id: projectId,
+      story: nullableText(formData, "story"),
+      benefits: lines(formData, "benefits"),
+      differences: lines(formData, "differences"),
+      video_url: nullableText(formData, "video_url"),
+    },
+    "project_id"
+  );
 
   refreshAdmin();
 }

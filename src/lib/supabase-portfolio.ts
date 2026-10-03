@@ -1,5 +1,6 @@
 import "server-only";
 
+import { projectSlug } from "@/lib/project-slug";
 import {
   staticPortfolioData,
   type AdditionalProject,
@@ -88,6 +89,14 @@ type DbAdditionalProject = {
   is_visible: boolean | null;
 };
 
+type DbProjectDetails = {
+  project_id: string;
+  story: string | null;
+  benefits: string[] | null;
+  differences: string[] | null;
+  video_url: string | null;
+};
+
 function headers(service = false) {
   const apiKey = service ? SUPABASE_SERVICE_ROLE_KEY : SUPABASE_ANON_KEY || SUPABASE_SERVICE_ROLE_KEY;
 
@@ -172,6 +181,7 @@ export async function getPortfolioData(options: QueryOptions = {}): Promise<Port
       flagshipPoints,
       additionalProjects,
       contacts,
+      projectDetails,
     ] = await Promise.all([
       request<DbSetting[]>("settings", `?select=*&order=order_no.asc,created_at.asc${visible}`, {}, service),
       request<DbSkillGroup[]>("skill_groups", `?select=*&order=order_no.asc,created_at.asc${visible}`, {}, service),
@@ -185,6 +195,7 @@ export async function getPortfolioData(options: QueryOptions = {}): Promise<Port
       request<DbFlagshipPoint[]>("flagship_points", `?select=*&order=order_no.asc,created_at.asc${visible}`, {}, service),
       request<DbAdditionalProject[]>("additional_projects", `?select=*&order=created_at.asc${visible}`, {}, service),
       request<DbContact[]>("contacts", `?select=*&order=created_at.asc${visible}`, {}, service),
+      request<DbProjectDetails[]>("project_details", "?select=*", {}, service).catch(() => [] as DbProjectDetails[]),
     ]);
 
     const mappedSettings = byOrder(settings);
@@ -227,6 +238,11 @@ export async function getPortfolioData(options: QueryOptions = {}): Promise<Port
     }));
 
     const mappedProjects = byOrder(projects).map<Project>((project) => ({
+      ...(staticPortfolioData.projects.find((item) => item.title === project.title) || {
+        story: project.summary || "",
+        benefits: [],
+        differences: [],
+      }),
       id: project.id,
       title: project.title,
       category: project.category,
@@ -243,6 +259,14 @@ export async function getPortfolioData(options: QueryOptions = {}): Promise<Port
       visualLabel: project.visual_label || project.title,
       orderNo: project.order_no ?? 0,
       isVisible: project.is_visible ?? true,
+      ...(projectDetails.find((detail) => detail.project_id === project.id)
+        ? {
+            story: projectDetails.find((detail) => detail.project_id === project.id)?.story || project.summary || "",
+            benefits: projectDetails.find((detail) => detail.project_id === project.id)?.benefits || [],
+            differences: projectDetails.find((detail) => detail.project_id === project.id)?.differences || [],
+            videoUrl: projectDetails.find((detail) => detail.project_id === project.id)?.video_url || undefined,
+          }
+        : {}),
     }));
 
     const mappedFlagshipPoints = byOrder(flagshipPoints).map<FlagshipPoint>((point) => ({
@@ -286,6 +310,83 @@ export async function getPortfolioData(options: QueryOptions = {}): Promise<Port
   }
 }
 
+export async function getProjectBySlug(slug: string): Promise<Project | null> {
+  const staticProject = staticPortfolioData.projects.find((item) => projectSlug(item.title) === slug);
+
+  if (!isSupabaseConfigured) {
+    return staticProject || null;
+  }
+
+  try {
+    const projects = await request<DbProject[]>(
+      "projects",
+      "?select=*&is_visible=eq.true&order=order_no.asc,created_at.asc"
+    );
+    const project = projects.find((item) => projectSlug(item.title) === slug);
+
+    if (!project) {
+      return null;
+    }
+
+    const projectFilter = `?project_id=eq.${encodeURIComponent(project.id)}&order=created_at.asc`;
+    const [tech, images, highlights, details] = await Promise.all([
+      request<Array<{ tech: string | null }>>("project_tech", `${projectFilter}&select=tech`),
+      request<Array<{ image_url: string | null }>>("project_images", `${projectFilter}&select=image_url`),
+      request<Array<{ text: string | null }>>("project_highlights", `${projectFilter}&select=text`),
+      request<DbProjectDetails[]>("project_details", `?project_id=eq.${encodeURIComponent(project.id)}&select=*`).catch(() => [] as DbProjectDetails[]),
+    ]);
+    const detail = details[0];
+
+    return {
+      ...(staticProject || {
+        story: project.summary || "",
+        benefits: [],
+        differences: [],
+      }),
+      id: project.id,
+      title: project.title,
+      category: project.category,
+      summary: project.summary || "",
+      liveUrl: project.live_url || undefined,
+      featured: project.featured ?? false,
+      tech: tech.filter((item) => item.tech).map((item) => item.tech as string),
+      images: images.filter((item) => item.image_url).map((item) => item.image_url as string),
+      highlights: highlights.filter((item) => item.text).map((item) => item.text as string),
+      visualLabel: project.visual_label || project.title,
+      orderNo: project.order_no ?? 0,
+      isVisible: project.is_visible ?? true,
+      story: detail?.story || staticProject?.story || project.summary || "",
+      benefits: detail?.benefits || staticProject?.benefits || [],
+      differences: detail?.differences || staticProject?.differences || [],
+      videoUrl: detail?.video_url || staticProject?.videoUrl,
+    };
+  } catch (error) {
+    console.error(error);
+    return staticProject || null;
+  }
+}
+
+export async function getNavigationItems() {
+  if (!isSupabaseConfigured) {
+    return staticPortfolioData.navItems;
+  }
+
+  try {
+    const settings = await request<DbSetting[]>(
+      "settings",
+      "?select=*&type=eq.nav&is_visible=eq.true&order=order_no.asc,created_at.asc"
+    );
+    const items = settings
+      .map((item) => ({ label: item.label || "", href: item.href || item.value || "#" }))
+      .filter((item) => item.label && item.href);
+
+    return items.length ? items : staticPortfolioData.navItems;
+  } catch (error) {
+    console.error(error);
+    return staticPortfolioData.navItems;
+  }
+}
+
 export async function adminSelect<T>(table: string, query = "?select=*") {
   return request<T[]>(table, query, {}, true);
 }
@@ -309,6 +410,14 @@ export async function adminDeleteWhere(table: string, column: string, value: str
     { method: "DELETE" },
     true
   );
+}
+
+export async function adminUpsert<T>(table: string, payload: T, conflictColumn: string) {
+  return request<T[]>(table, `?on_conflict=${encodeURIComponent(conflictColumn)}`, {
+    method: "POST",
+    headers: { Prefer: "resolution=merge-duplicates,return=representation" },
+    body: JSON.stringify(payload),
+  }, true);
 }
 
 export async function adminDeleteAll(table: string) {

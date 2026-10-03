@@ -1,12 +1,14 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
-import { ExternalLink, Filter, X } from "lucide-react";
+import Image from "next/image";
+import { ExternalLink, Filter, LoaderCircle } from "lucide-react";
 import { useMemo, useState } from "react";
 import { FadeIn } from "@/components/motion";
 import { ProjectVisual } from "@/components/project-visual";
 import { SectionHeading } from "@/components/section-heading";
 import type { Project, ProjectCategory } from "@/lib/portfolio-data";
+import { projectSlug } from "@/lib/project-slug";
+import Link from "next/link";
 
 type Props = {
   projects: Project[];
@@ -15,7 +17,7 @@ type Props = {
 
 export function ProjectsSection({ projects, projectFilters }: Props) {
   const [filter, setFilter] = useState<(typeof projectFilters)[number]>("All");
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [loadingProject, setLoadingProject] = useState<string | null>(null);
 
   const filteredProjects = useMemo(() => {
     if (filter === "All") {
@@ -59,11 +61,11 @@ export function ProjectsSection({ projects, projectFilters }: Props) {
           <FadeIn
             key={project.title}
             delay={index * 0.04}
-            className={`group section-card overflow-hidden p-5 sm:p-6 ${
-              project.featured ? "lg:col-span-2" : ""
+            className={`group section-card h-full overflow-hidden p-5 sm:p-6 ${
+              project.featured ? "lg:col-span-2" : "min-h-[520px]"
             }`}
           >
-            <div className={`grid gap-6 ${project.featured ? "lg:grid-cols-[1.1fr_0.9fr]" : ""}`}>
+            <div className={`grid h-full gap-6 ${project.featured ? "lg:min-h-[390px] lg:grid-cols-[1.1fr_0.9fr]" : ""}`}>
               <ProjectVisual label={project.visualLabel} 
               images={project.images}
               featured={project.featured} />
@@ -82,7 +84,14 @@ export function ProjectsSection({ projects, projectFilters }: Props) {
                   <h3 className="mt-5 text-2xl font-semibold text-fg sm:text-3xl">
                     {project.title}
                   </h3>
-                  <p className="mt-4 text-base leading-8 text-muted">{project.summary}</p>
+                  <p className="mt-4 line-clamp-3 text-base leading-8 text-muted">{project.summary}</p>
+                  <Link
+                    href={`/projects/${projectSlug(project.title)}`}
+                    onClick={() => setLoadingProject(project.title)}
+                    className="mt-3 inline-flex text-sm font-semibold text-accent hover:text-fg"
+                  >
+                    See more
+                  </Link>
                   <div className="mt-6 flex flex-wrap gap-3">
                     {project.tech.map((item) => (
                       <span
@@ -94,25 +103,25 @@ export function ProjectsSection({ projects, projectFilters }: Props) {
                     ))}
                   </div>
                 </div>
-                <div className="mt-8 flex flex-wrap gap-3">
+                <div className="mt-8 flex flex-col items-start gap-3">
+                  <Link
+                    href={`/projects/${projectSlug(project.title)}`}
+                    onClick={() => setLoadingProject(project.title)}
+                    className="rounded-full border border-line bg-surface px-5 py-3 text-sm font-semibold text-fg hover:-translate-y-0.5 hover:border-accent/40 hover:text-accent"
+                  >
+                    Case study
+                  </Link>
                   {project.liveUrl ? (
                     <a
                       href={project.liveUrl}
                       target={project.liveUrl.startsWith("http") ? "_blank" : undefined}
                       rel={project.liveUrl.startsWith("http") ? "noreferrer" : undefined}
-                      className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white hover:-translate-y-0.5 hover:bg-accent dark:bg-white dark:text-ink"
+                      className="inline-flex items-center gap-2 px-2 text-sm font-semibold text-accent hover:text-fg"
                     >
-                      Live
+                      Visit live project
                       <ExternalLink size={15} />
                     </a>
                   ) : null}
-                  <button
-                    type="button"
-                    onClick={() => setSelectedProject(project)}
-                    className="rounded-full border border-line bg-surface px-5 py-3 text-sm font-semibold text-fg hover:-translate-y-0.5 hover:border-accent/40 hover:text-accent"
-                  >
-                    Details
-                  </button>
                 </div>
               </div>
             </div>
@@ -120,53 +129,18 @@ export function ProjectsSection({ projects, projectFilters }: Props) {
         ))}
       </div>
 
-      <AnimatePresence>
-        {selectedProject ? (
-          <motion.div
-            className="fixed inset-0 z-[60] flex items-end justify-center bg-ink/50 p-4 backdrop-blur-sm sm:items-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSelectedProject(null)}
-          >
-            <motion.div
-              initial={{ opacity: 0, y: 24, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 12 }}
-              transition={{ duration: 0.24 }}
-              onClick={(event) => event.stopPropagation()}
-              className="section-card max-h-[90vh] w-full max-w-3xl overflow-auto p-6 sm:p-8"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <span className="eyebrow">{selectedProject.category}</span>
-                  <h3 className="mt-5 text-3xl font-semibold text-fg">
-                    {selectedProject.title}
-                  </h3>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setSelectedProject(null)}
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-line bg-surface text-muted hover:text-fg"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-              <p className="mt-5 text-base leading-8 text-muted">{selectedProject.summary}</p>
-              <div className="mt-8 grid gap-4">
-                {selectedProject.highlights.map((highlight) => (
-                  <div
-                    key={highlight}
-                    className="rounded-[1.5rem] border border-line/80 bg-surface/80 p-5 text-sm leading-7 text-fg"
-                  >
-                    {highlight}
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+      {loadingProject ? (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-bg/90 px-6 backdrop-blur-md">
+          <div className="flex flex-col items-center text-center">
+            <div className="animate-pulse rounded-2xl border border-line/70 bg-card/80 px-8 py-6 shadow-soft">
+              <Image src="/logo/digital-sign-nym.png" alt="Mehedi Hasan Nayem" width={240} height={100} priority className="h-auto w-48 dark:invert" />
+            </div>
+            <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.2em] text-accent">
+              <LoaderCircle size={15} className="animate-spin" /> Loading case study
+            </div>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }

@@ -40,7 +40,7 @@ export function Navbar({ navItems }: Props) {
 
         <nav className="hidden items-center gap-7 lg:flex">
           {navItems.map((item) => (
-            <a key={item.href} href={item.href} className="text-sm text-muted hover:text-fg">
+            <a key={item.href} href={item.href.startsWith("#") ? `/${item.href}` : item.href} className="text-sm text-muted hover:text-fg">
               {item.label}
             </a>
           ))}
@@ -49,7 +49,7 @@ export function Navbar({ navItems }: Props) {
         <div className="hidden items-center gap-3 lg:flex">
           <ThemeToggle />
           <a
-            href="#contact"
+            href="/#contact"
             className="rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white hover:-translate-y-0.5 hover:bg-accent dark:bg-white dark:text-ink"
           >
             Contact Me
@@ -77,7 +77,7 @@ export function Navbar({ navItems }: Props) {
             {navItems.map((item) => (
               <a
                 key={item.href}
-                href={item.href}
+                href={item.href.startsWith("#") ? `/${item.href}` : item.href}
                 onClick={() => setOpen(false)}
                 className="rounded-2xl px-4 py-3 text-sm text-muted hover:bg-accent/5 hover:text-fg"
               >

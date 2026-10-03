@@ -30,6 +30,10 @@ export type Project = {
   images?: string[];
   highlights: string[];
   visualLabel: string;
+  story: string;
+  benefits: string[];
+  differences: string[];
+  videoUrl?: string;
   orderNo?: number;
   isVisible?: boolean;
 };
@@ -183,6 +187,17 @@ export const projects: Project[] = [
       "/projects/travelotaapplicationdetails.png"
     ],
     visualLabel: "Visa workflow + CRM dashboard",
+    story: "This platform grew from a need to bring visa and tour operations into one dependable journey. The work connected customer applications, document collection, payment approval, and internal CRM coordination into a system teams could actually operate every day.",
+    benefits: [
+      "Customers get clearer next steps and fewer disconnected follow-ups.",
+      "Operations teams see application status, documents, and approvals in one place.",
+      "Conditional workflows reduce manual checking across visa and traveler scenarios.",
+    ],
+    differences: [
+      "Combines customer-facing travel flows with internal CRM visibility.",
+      "Designed around real visa conditions instead of a generic checkout flow.",
+      "Balances automation with human approval points for sensitive operations.",
+    ],
     highlights: [
       "Dynamic visa application system with destination-based and visa-type-based logic.",
       "Multi-condition workflows for family, profession, sponsorship, and supporting document rules.",
@@ -201,6 +216,17 @@ export const projects: Project[] = [
       "/projects/creativeflowhome.png"
     ],
     visualLabel: "Dynamic agency CMS",
+    story: "CreativeFlow was built as a content-led agency experience where the public site and daily business operations could evolve together. The CMS gives the team control over brand content, leads, appointments, and site settings without depending on a developer for every update.",
+    benefits: [
+      "Faster content updates across the public site.",
+      "More structured lead capture through guided queries.",
+      "Appointments and availability can be managed from one control surface.",
+    ],
+    differences: [
+      "The CMS is shaped around the agency workflow, not only page editing.",
+      "Query and appointment tools are part of the content system.",
+      "Branding and site settings remain configurable after launch.",
+    ],
     highlights: [
       "Admin-controlled step-based query system for guided lead capture.",
       "Dynamic appointment booking with configurable date and time availability.",
@@ -219,6 +245,17 @@ export const projects: Project[] = [
       "/projects/curveandfitstorefront.png"
     ],
     visualLabel: "E-commerce Store",
+    story: "Curve&Fit focused on creating a low-friction shopping journey while still supporting the operational details of a growing ecommerce business. The experience connects product discovery, variants, checkout, authentication, orders, and transactional email.",
+    benefits: [
+      "Guests can complete checkout without creating an account.",
+      "Variant-aware shopping makes size and color selection clearer.",
+      "Customers can follow order progress from their profile.",
+    ],
+    differences: [
+      "Supports both authenticated and guest customer journeys.",
+      "Commerce logic includes coupons, variants, and transactional touchpoints.",
+      "The storefront is connected to practical post-purchase operations.",
+    ],
     highlights: [
       "Secure auth flows plus guest checkout for low-friction purchasing.",
       "Advanced filtering, category-driven browsing, quick add-to-cart, and size/color variant handling.",
@@ -238,6 +275,17 @@ export const projects: Project[] = [
       "/projects/curvenfitcoupon.png",
     ],
     visualLabel: "Commerce admin suite",
+    story: "The Curve&Fit admin CMS was created to give the business a complete operating view behind the storefront. Product, order, coupon, banner, and revenue workflows live together so everyday decisions do not require scattered tools.",
+    benefits: [
+      "Teams can manage products and merchandising without code changes.",
+      "Order status and delivery operations stay visible to the business.",
+      "Revenue summaries connect operational activity with financial visibility.",
+    ],
+    differences: [
+      "Combines commerce management with business settings and reporting.",
+      "Includes practical controls for hiding, featuring, and updating products.",
+      "Designed as an operating tool rather than a decorative dashboard.",
+    ],
     highlights: [
       "Product lifecycle control including create, edit, hide, unhide, and best-feature curation.",
       "Order management with delivery status updates and invoice download support.",
@@ -253,6 +301,17 @@ export const projects: Project[] = [
       "A modern hiring platform with public job discovery and an admin-side HR CMS for applicant review, status updates, and email automation.",
     tech: ["Next.js", "Supabase", "Tailwind CSS", "Resend"],
     visualLabel: "Hiring platform",
+    story: "The Ryoko career platform connects public job discovery with the internal recruitment workflow. The goal was to make applying simple for candidates while giving the HR team clearer control over jobs, applicants, review states, and communication.",
+    benefits: [
+      "Candidates can discover roles and apply through a focused flow.",
+      "Recruiters can review CVs, update applicant states, and follow up faster.",
+      "Job content and recruitment operations are managed from one CMS.",
+    ],
+    differences: [
+      "Treats recruitment as a complete workflow, not just a job board.",
+      "Supports future-role applications and mapped office information.",
+      "Admin review states connect directly to interview and rejection workflows.",
+    ],
     highlights: [
       "Dynamic job listing experience with modern drawer-based detail views and streamlined application flows.",
       "Future-role applications, contact details, and mapped office information.",
@@ -268,6 +327,17 @@ export const projects: Project[] = [
       "A PHP-based company site and CMS for a research and consultancy business, with dynamic landing content, projects, and query handling.",
     tech: ["PHP", "MySQL", "Custom CMS"],
     visualLabel: "Business website CMS",
+    story: "The Environnest site and admin system were designed to give a research and consultancy business a credible public presence while keeping everyday content ownership practical. The CMS keeps landing content, projects, partner information, and inquiries manageable in one place.",
+    benefits: [
+      "Business content can change without developer intervention.",
+      "Project and partner information stays organized for public presentation.",
+      "Inquiry handling is connected to the site instead of being an afterthought.",
+    ],
+    differences: [
+      "Built around a real business ownership model with roles and controls.",
+      "Combines public profile content with inquiry and partner management.",
+      "Keeps a custom PHP/MySQL stack useful through a focused CMS layer.",
+    ],
     highlights: [
       "Business profile website with dynamic pages, project content, and inquiry handling.",
       "Admin panel for landing content, projects, contact submissions, partner data, and user roles.",
